@@ -1,0 +1,6 @@
+br\com\kirio\scheduledquartz\tasks\MyTaskTwo.class
+br\com\kirio\scheduledquartz\config\BatchConfig.class
+br\com\kirio\scheduledquartz\config\QuartzConfig.class
+br\com\kirio\scheduledquartz\tasks\MyTaskOne.class
+br\com\kirio\scheduledquartz\jobs\CustomQuartzJob.class
+br\com\kirio\scheduledquartz\App.class
