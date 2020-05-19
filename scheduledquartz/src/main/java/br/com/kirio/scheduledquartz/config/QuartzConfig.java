@@ -24,13 +24,13 @@ import br.com.kirio.scheduledquartz.jobs.CustomQuartzJob;
 
 @Configuration
 public class QuartzConfig {
-
+					
 	@Autowired
 	private JobLauncher jobLauncher;
 	
 	@Autowired
 	private JobLocator jobLocator;
-	
+			
 	@Bean
 	public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
 		JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
@@ -39,46 +39,46 @@ public class QuartzConfig {
 	}
 	
 	@Bean
-	public JobDetail jobOneDetail() {	
+	public JobDetail jobDetailProcessaAgendamento() {	
 		return JobBuilder.newJob(CustomQuartzJob.class)
-				         .withIdentity("demoJobOne")
-				         .setJobData(getJobOneDataMap())
+				         .withIdentity("demoJobProcessaAgendamento")
+				         .setJobData(getJobProcessaAgendamentoDataMap())
+				         .storeDurably()				         
+				         .build();		
+	}
+	
+	@Bean
+	public JobDetail jobDetailProcessaTransacao() {	
+		return JobBuilder.newJob(CustomQuartzJob.class)
+				         .withIdentity("demoJobProcessaTransacao")
+				         .setJobData(getJobProcessaTransacaoDataMap())
 				         .storeDurably()
 				         .build();		
 	}
 	
 	@Bean
-	public JobDetail jobTwoDetail() {	
-		return JobBuilder.newJob(CustomQuartzJob.class)
-				         .withIdentity("demoJobTwo")
-				         .setJobData(getJobTwoDataMap())
-				         .storeDurably()
-				         .build();		
-	}
-	
-	@Bean
-	public Trigger jobOneTrigger() {
+	public Trigger jobProcessaAgendamentoTrigger() {
 		SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
 													                 .withIntervalInSeconds(10)
 													                 .repeatForever(); 
         return TriggerBuilder.newTrigger()
-                			 .forJob(jobOneDetail())
-                			 .withIdentity("jobOneTrigger")
-                			 .withSchedule(scheduleBuilder)
+                			 .forJob(jobDetailProcessaAgendamento())
+                			 .withIdentity("jobProcessaAgendamentoTrigger")
+                			 .withSchedule(scheduleBuilder)                			 
                 			 .build();
 	}
 	
 	@Bean
-    public Trigger jobTwoTrigger() {
+    public Trigger jobProcessaTransacaoTrigger() {
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-                													 .withIntervalInSeconds(20)
+                													 .withIntervalInSeconds(50)
                 													 .repeatForever(); 
         return TriggerBuilder.newTrigger()
-                			 .forJob(jobTwoDetail())
-                			 .withIdentity("jobTwoTrigger")
+                			 .forJob(jobDetailProcessaTransacao())
+                			 .withIdentity("jobProcessaTransacaoTrigger")
                 			 .withSchedule(scheduleBuilder)
                 			 .build();
-    }
+    }		
 	
 	@Bean
     public Properties quartzProperties() throws IOException {
@@ -87,27 +87,28 @@ public class QuartzConfig {
         propertiesFactoryBean.afterPropertiesSet();
         return propertiesFactoryBean.getObject();
     }
-	
+		
 	@Bean
-    public SchedulerFactoryBean schedulerFactoryBean() throws IOException {
+    public SchedulerFactoryBean schedulerFactoryBean() throws IOException {				
         SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
-        scheduler.setTriggers(jobOneTrigger(), jobTwoTrigger());
+        scheduler.setTriggers(jobProcessaAgendamentoTrigger(), jobProcessaTransacaoTrigger());  
         scheduler.setQuartzProperties(quartzProperties());
-        scheduler.setJobDetails(jobOneDetail(), jobTwoDetail());
+        scheduler.setJobDetails(jobDetailProcessaAgendamento(), jobDetailProcessaTransacao());          
+     //   scheduler.setJobFactory(new SchedulerJobFactory());
         return scheduler;
     }
 	
-	private JobDataMap getJobOneDataMap() {
+	private JobDataMap getJobProcessaAgendamentoDataMap() {
 		JobDataMap jobDataMap = new JobDataMap();
-		jobDataMap.put("jobName", "demoJobOne");
+		jobDataMap.put("jobName", "demoJobProcessaAgendamento");
 		jobDataMap.put("jobLauncher", jobLauncher);
 		jobDataMap.put("jobLocator", jobLocator);
 		return jobDataMap;
 	}
 	
-	private JobDataMap getJobTwoDataMap() {
+	private JobDataMap getJobProcessaTransacaoDataMap() {
 		JobDataMap jobDataMap = new JobDataMap();
-		jobDataMap.put("jobName", "demoJobTwo");
+		jobDataMap.put("jobName", "demoJobProcessaTransacao");
 		jobDataMap.put("jobLauncher", jobLauncher);
 		jobDataMap.put("jobLocator", jobLocator);
 		return jobDataMap;

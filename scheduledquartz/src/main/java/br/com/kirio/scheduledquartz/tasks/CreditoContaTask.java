@@ -5,17 +5,15 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-public class MyTaskTwo implements Tasklet {
+public class CreditoContaTask implements Tasklet {
 
 	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		System.out.println("MytaskTwo start...");
-		
-		// Implementar codigo aqui
+	public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+		System.out.println("Iniciando Crédito em Conta...");
 		
 		
-		System.out.println("MytaskTwo Finish!");
 		
+		System.out.println("Finalizado com sucesso - Crédito em Conta");		
 		return RepeatStatus.FINISHED;
 	}
 
